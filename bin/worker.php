@@ -8,7 +8,7 @@ use Predis\Client as RedisClient;
 
 echo " [*] Background worker started. Waiting for jobs. To exit press CTRL+C\n";
 
-$connection = new AMQPStreamConnection('localhost', 5672, 'guest', 'guest');
+$connection = new AMQPStreamConnection('0.0.0.0', 5672, 'guest', 'guest');
 $channel = $connection->channel();
 $redis = new RedisClient();
 $queueName = 'pdf_generation_queue';

@@ -1,5 +1,8 @@
-
 <?php
+
+if (!extension_loaded('openswoole')) {
+    die("Error: The OpenSwoole extension is not loaded. Please install and enable it.\n");
+}
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -8,17 +11,18 @@ use MyFramework\Core\ConnectionManager;
 use MyFramework\Controllers\HomeController;
 use MyFramework\Controllers\ReportController;
 use OpenSwoole\Http\Request;
-use OpenSwoole\WebSocket\Frame;
-use OpenSwoole\WebSocket\Server;
+use OpenSwoole\WebSocket\Frame; // Explicitly use the Frame class
+use OpenSwoole\WebSocket\Server as WebSocketServer;
+use OpenSwoole\Server as SwooleServer; // Alias the OpenSwoole\Server class
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Predis\Client as RedisClient;
+use OpenSwoole\Coroutine\Redis;
 
 // --- Configuration ---
-$jwtSecretKey = 'safl;sa;kfak;fjk;fm;kafaffafafasf';
+$jwtSecretKey = 'jfjfjfjfjakfjakldfjkldsjfklsjkdlf';
 
 // --- Server Setup ---
-$server = new Server("0.0.0.0", 5000);
+$server = new WebSocketServer("0.0.0.0", 5000);
 $server->set([
     'worker_num' => 2,
     'enable_coroutine' => true,
@@ -35,24 +39,36 @@ $router->addRoute('GET', '/', [$homeController, 'index']);
 $router->addRoute('POST', '/reports', [$reportController, 'generate']);
 
 // --- Server Event Handlers ---
-$server->on('start', function(Server $server) use ($jwtSecretKey) {
+$server->on('start', function(SwooleServer $server) use ($jwtSecretKey) {
     go(function () use ($server) {
-        $redis = new RedisClient();
-        $pubsub = $redis->pubSubLoop();
-        $pubsub->psubscribe('user_notifications:*');
+        $redis = new \OpenSwoole\Coroutine\Redis();
+        $redis->connect('redis', 6379); // Use the service name from docker-compose
+        $redis->setOption(\OpenSwoole\Coroutine\Redis::OPT_READ_TIMEOUT, -1); // Block forever
 
-        foreach ($pubsub as $message) {
-            if ($message->kind !== 'pmessage') continue;
+        $channels = $redis->psubscribe(['user_notifications:*']);
+        if ($channels === false) {
+            echo "[Redis Listener] Failed to subscribe to channels\n";
+            return;
+        }
 
-            echo "[Redis Listener] Received message on channel '{$message->channel}'\n";
-            $parts = explode(':', $message->channel);
+        while (true) {
+            $message = $redis->recv();
+            if ($message === false) {
+                echo "[Redis Listener] Redis connection closed or error\n";
+                break;
+            }
+            // $message format: [ 'pmessage', pattern, channel, payload ]
+            if ($message[0] !== 'pmessage') continue;
+
+            echo "[Redis Listener] Received message on channel '{$message[2]}'\n";
+            $parts = explode(':', $message[2]);
             $userId = end($parts);
-            
-            $fd = ConnectionManager::getFdByUserId($userId);
+
+            $fd = \MyFramework\Core\ConnectionManager::getFdByUserId($userId);
 
             if ($fd && $server->exist($fd)) {
                 echo "[Redis Listener] Relaying message to User #{$userId} on fd #{$fd}\n";
-                $server->push($fd, $message->payload);
+                $server->push($fd, $message[3]);
             }
         }
     });

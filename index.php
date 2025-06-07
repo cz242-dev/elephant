@@ -1,4 +1,3 @@
-
 <?php
 // Simple static file server for testing
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
