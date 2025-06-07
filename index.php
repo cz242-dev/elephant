@@ -1,21 +1,25 @@
 
 <?php
 // Simple static file server for testing
-$requestUri = $_SERVER['REQUEST_URI'];
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
 
-if ($requestUri === '/' || $requestUri === '/index.html') {
+// Remove query string for file serving
+$path = parse_url($requestUri, PHP_URL_PATH);
+
+if ($path === '/' || $path === '/index.html') {
     header('Content-Type: text/html');
-    readfile('index.html');
+    if (file_exists('index.html')) {
+        readfile('index.html');
+    } else {
+        echo "<!DOCTYPE html><html><head><title>Server Not Running</title></head><body>";
+        echo "<h1>Swoole Server Not Running</h1>";
+        echo "<p>Please start the Swoole server with: <code>php bin/server.php</code></p>";
+        echo "<p>The WebSocket server should be running on port 5000.</p>";
+        echo "</body></html>";
+    }
     exit;
 }
 
-// For WebSocket connections, redirect to server
-if (strpos($_SERVER['HTTP_UPGRADE'] ?? '', 'websocket') !== false) {
-    header('HTTP/1.1 426 Upgrade Required');
-    header('Upgrade: websocket');
-    header('Connection: Upgrade');
-    exit('WebSocket upgrade required. Use ws://localhost:5000');
-}
-
-// Default response
-echo "Swoole server should be running on port 5000. Use 'php bin/server.php' to start.";
+// Default response for other requests
+http_response_code(404);
+echo "File not found. Start the Swoole server with: php bin/server.php";
