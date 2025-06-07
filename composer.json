@@ -1,0 +1,18 @@
+
+{
+    "name": "my-framework/swoole-realtime-app",
+    "description": "A modern, real-time PHP framework using Swoole, RabbitMQ, and Redis.",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "ext-swoole": "*",
+        "php-amqplib/php-amqplib": "^3.5",
+        "predis/predis": "^2.2",
+        "firebase/php-jwt": "^6.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyFramework\\": "src/"
+        }
+    }
+}

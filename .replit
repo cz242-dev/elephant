@@ -1,6 +1,7 @@
 run = "php -S 0.0.0.0:8000 -t ."
 
 entrypoint = "index.php"
+modules = ["php-8.1"]
 
 [nix]
 channel = "stable-22_11"
@@ -12,3 +13,24 @@ deploymentTarget = "cloudrun"
 [[ports]]
 localPort = 8000
 externalPort = 80
+
+[workflows]
+runButton = "Start Swoole Server"
+
+[[workflows.workflow]]
+name = "Start Swoole Server"
+author = 37139049
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php bin/server.php"
+
+[[workflows.workflow]]
+name = "Start Background Worker"
+author = 37139049
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php bin/worker.php"
