@@ -5,14 +5,13 @@ namespace MyFramework\Core;
 
 class ConnectionManager
 {
-    // In-memory storage. For multi-server setup, use Redis instead.
     private static array $fdToUser = [];
     private static array $userToFd = [];
 
     public static function register(int $userId, int $fd): void
     {
         self::$fdToUser[$fd] = $userId;
-        self::$userToFd[$userId] = $fd; // Note: this assumes one connection per user
+        self::$userToFd[$userId] = $fd;
     }
 
     public static function unregister(int $fd): void

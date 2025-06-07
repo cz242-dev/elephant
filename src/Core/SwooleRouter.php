@@ -24,7 +24,6 @@ class SwooleRouter
         }
 
         go(function () use ($server, $fd, $userId, $uri, $handler) {
-            // Pass the user ID to the controller action
             $responseData = $handler($userId);
             
             $server->push($fd, json_encode([

@@ -1,17 +1,17 @@
-run = "php -S 0.0.0.0:8000 -t ."
+run = "php bin/server.php"
 
-entrypoint = "index.php"
+entrypoint = "bin/server.php"
 modules = ["php-8.1"]
 
 [nix]
 channel = "stable-22_11"
 
 [deployment]
-run = ["php", "-S", "0.0.0.0:8000", "-t", "."]
+run = ["php", "bin/server.php"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
-localPort = 8000
+localPort = 5000
 externalPort = 80
 
 [workflows]
@@ -25,12 +25,3 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "php bin/server.php"
-
-[[workflows.workflow]]
-name = "Start Worker"
-author = 37139049
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "php bin/worker.php"
