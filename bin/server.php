@@ -23,7 +23,7 @@ $server->set([
     'worker_num' => 2,
     'enable_coroutine' => true,
 ]);
-echo "Swoole WebSocket server started at ws://0.0.0.0:8080\n";
+echo "Swoole WebSocket server started at ws://0.0.0.0:5000\n";
 
 // --- Application Components ---
 $router = new SwooleRouter();
