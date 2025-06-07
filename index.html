@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swoole Framework Test</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; color: #333; }
+        #app { max-width: 800px; margin: 2rem auto; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        button { font-size: 1rem; padding: 0.5em 1em; border-radius: 5px; border: none; cursor: pointer; }
+        .log { background: #2d3748; color: #f7fafc; padding: 1rem; border-radius: 5px; margin-top: 1rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; height: 300px; overflow-y: scroll; }
+        .btn-primary { background: #4299e1; color: white; }
+        .btn-secondary { background: #4a5568; color: white; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Swoole Real-Time Framework</h1>
+        <div>
+            <button id="get-dashboard" class="btn-primary">Get Dashboard Data</button>
+            <button id="generate-report" class="btn-secondary">Generate PDF Report (Job)</button>
+        </div>
+        <div id="logs" class="log">Connecting...</div>
+    </div>
+    <script>
+        const logsContainer = document.getElementById('logs');
+        
+        function logMessage(message, type = 'info') {
+            const line = document.createElement('div');
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            if (type === 'error') line.style.color = '#f56565';
+            if (type === 'success') line.style.color = '#48bb78';
+            logsContainer.appendChild(line);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        // --- IMPORTANT ---
+        // In a real app, you get this token after a successful HTTP login.
+        // This is a sample token for a user with ID 123, valid for 1 hour.
+        // You can generate your own at jwt.io using secret 'your-super-secret-key-that-must-be-changed'
+        // Payload: { "sub": 123, "iat": 1749214400, "exp": 1749218000 }
+        const JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyMywiaWF0IjoxNzQ5MjE0NDAwLCJleHAiOjE3NDkyMTgwMDB9.iFvskN5A2sBTsD0Hq8E0rK2G-Z-Y2t6R0t8f0t0q2t0";
+
+        const ws = new WebSocket(`ws://localhost:8080?token=${JWT_TOKEN}`);
+
+        ws.onopen = () => {
+            logMessage('Connection established.', 'success');
+        };
+
+        ws.onmessage = (event) => {
+            logMessage(`RECV: ${event.data}`);
+            const response = JSON.parse(event.data);
+            if (response.type === 'job_complete' && response.event === 'report_ready') {
+                logMessage(`SUCCESS! Your report is ready: ${response.data.url}`, 'success');
+            }
+        };
+
+        ws.onerror = (error) => {
+            logMessage('WebSocket Error', 'error');
+            console.error(error);
+        };
+
+        ws.onclose = (event) => {
+            logMessage(`Connection closed. Code: ${event.code}, Reason: ${event.reason}`, 'error');
+        };
+
+        document.getElementById('get-dashboard').addEventListener('click', () => {
+            const request = { uri: '/', method: 'GET' };
+            logMessage(`SEND: ${JSON.stringify(request)}`);
+            ws.send(JSON.stringify(request));
+        });
+
+        document.getElementById('generate-report').addEventListener('click', () => {
+            const request = { uri: '/reports', method: 'POST' };
+            logMessage(`SEND: ${JSON.stringify(request)}`);
+            ws.send(JSON.stringify(request));
+        });
+    </script>
+</body>
+</html>
+
+<!-- Sources: -->
+<!-- 1. https://github.com/15822681062/rabbitmq -->
