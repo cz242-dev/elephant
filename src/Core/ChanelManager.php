@@ -6,7 +6,6 @@ use Swoole\WebSocket\Server;
 
 class ChannelManager
 {
-    private array $channels = [];
 
     public function subscribe(Server $server, int $fd, string $channel): void
     {
