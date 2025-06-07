@@ -2,7 +2,7 @@
 { pkgs }: {
   deps = [
     pkgs.php81
-    pkgs.php81Extensions.openswoole
+    pkgs.php81Extensions.swoole
     pkgs.php81Extensions.mbstring
     pkgs.php81Extensions.iconv
     pkgs.php81Extensions.filter

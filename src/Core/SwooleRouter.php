@@ -3,7 +3,7 @@
 
 namespace MyFramework\Core;
 
-use OpenSwoole\WebSocket\Server;
+use Swoole\WebSocket\Server;
 
 class SwooleRouter
 {
