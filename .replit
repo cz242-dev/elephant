@@ -24,4 +24,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "nix-shell --run 'php bin/server.php'"
+args = "php bin/server.php"
