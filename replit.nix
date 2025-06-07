@@ -7,6 +7,9 @@
     pkgs.php81Extensions.filter
     pkgs.php81Extensions.openssl
     pkgs.php81Extensions.swoole
+    pkgs.php81Extensions.redis
+    pkgs.php81Extensions.pdo
+    pkgs.php81Extensions.pdo_mysql
     pkgs.php81Packages.composer
     pkgs.redis
     pkgs.rabbitmq-server
