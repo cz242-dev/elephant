@@ -3,7 +3,7 @@
 
 namespace MyFramework\Controllers;
 
-use Swoole\Coroutine as Co;
+use OpenSwoole\Coroutine as Co;
 
 class HomeController
 {

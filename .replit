@@ -19,10 +19,10 @@ localPort = 8000
 externalPort = 8000
 
 [workflows]
-runButton = "Start Swoole Server"
+runButton = "Start Server"
 
 [[workflows.workflow]]
-name = "Start Swoole Server"
+name = "Start Server"
 author = 37139049
 mode = "sequential"
 
