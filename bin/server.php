@@ -15,7 +15,7 @@ use Firebase\JWT\Key;
 use Predis\Client as RedisClient;
 
 // --- Configuration ---
-$jwtSecretKey = 'your-super-secret-key-that-must-be-changed';
+$jwtSecretKey = 'safl;sa;kfak;fjk;fm;kafaffafafasf';
 
 // --- Server Setup ---
 $server = new Server("0.0.0.0", 5000);
