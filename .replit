@@ -27,7 +27,7 @@ task = "shell.exec"
 args = "php bin/server.php"
 
 [[workflows.workflow]]
-name = "Start Background Worker"
+name = "Start Worker"
 author = 37139049
 mode = "sequential"
 

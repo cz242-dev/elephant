@@ -40,7 +40,7 @@
         // Payload: { "sub": 123, "iat": 1749214400, "exp": 1749218000 }
         const JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyMywiaWF0IjoxNzQ5MjE0NDAwLCJleHAiOjE3NDkyMTgwMDB9.iFvskN5A2sBTsD0Hq8E0rK2G-Z-Y2t6R0t8f0t0q2t0";
 
-        const ws = new WebSocket(`ws://localhost:8080?token=${JWT_TOKEN}`);
+        const ws = new WebSocket(`ws://localhost:5000?token=${JWT_TOKEN}`);
 
         ws.onopen = () => {
             logMessage('Connection established.', 'success');

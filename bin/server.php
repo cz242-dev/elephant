@@ -18,7 +18,7 @@ use Predis\Client as RedisClient;
 $jwtSecretKey = 'your-super-secret-key-that-must-be-changed';
 
 // --- Server Setup ---
-$server = new Server("0.0.0.0", 8080);
+$server = new Server("0.0.0.0", 5000);
 $server->set([
     'worker_num' => 2,
     'enable_coroutine' => true,
